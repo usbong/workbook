@@ -1,48 +1,8 @@
-# Browser-based Units Converter App
+# Browser-based Workbook App
 
-Can you make use of your knowledge of HTML5 and Javascript to create a simple units converter app that runs on web browers?
+http://store.usbong.ph/server/workbook/workbook.php
 
-# Development Logs
-
-1. 20260525; Create the appearance first. Without yet interactivity.<br/>
-
-<img src="https://github.com/masarapmabuhay/conv/blob/main/screenshots/convScreenshotV20260525T1522.png" width="60%">
-
-2. 20260527; http://store.usbong.ph/server/conv/conv20260527.html<br/>
-+added: basic conversion from kg to pound or vice-versa; using constant `1 kg` is to `2.20462262 pounds`;<br/> 
-+noted: conversion quickly done and without having to refresh the browser due to using Javascript;<br/>
-+added: `toFixed(4)` to reduce not have too many numbers after the decimal point;<br/>
-TODO: -verify parameter put in `toFixed(...)`;
-
-3. 20260528; http://store.usbong.ph/server/conv/conv20260528.html<br/>
-+added: `select` function that auto-updates the labels and the multiplier based on the chosen option; `Mass` or `Length`<br/>
-+added: `Length` coversion; `foot` to `centimeter`; in addition to `Mass`<br/>
-+updated: position of cursor in input boxes to `center` instead of `right`<br/>
-+fixed: `NaN` is displayed in the input box when the other input box has received a letter in the alphabet or some other non-number character<br/>
-+fixed: letters in the alphabet can still be inserted between the numbers in the input box<br/>
-+fixed: decimal point cannot be added if the input box is blank<br/>
-+updated: page's scale level based on the user's machine specs and the browser that he's using<br/>
-TODO: -verify parameter put in `toFixed(...)`;<br/>
-
-4. 20260529; http://store.usbong.ph/server/conv/conv20260529.html<br/>
-+updated: UI on Android; larger font size, input boxes, etc;<br/>
-+noted: Chrome on Android doesn't show the updated html page;<br/>
-+noted: cursor position via `selectionStart` doesn't give the correct position if the input text is modified to be made longer;<br/>
-
-<img src="https://github.com/usbong/conv/blob/main/screenshots/convScreenshotAndroidV20260529T1557.png" width="30%">
-
-5. 20260530; http://store.usbong.ph/server/conv/conv20260530.html<br/>
-+fixed: more than one decimal point could be entered per input box<br/>
-+fixed: kg and pound are for Mass; while foot and cm are for Length<br/>
-+added: "lbs" in the label for pound, so that it's now "Pound (lbs)";<br/>
-+added: image icons<br/>
-+added: "Demo Version. Please report for any errors."; report links to the github page;<br/>
-+updated: default unit to measure to be `Mass` instead of `Length`;<br/>
-+updated: increased font size of disclaimer when app is accessed via Android;<br/>
-
-5. 20260603 (CURRENT); http://store.usbong.ph/server/conv/conv.html<br/>
-+fixed: when certain non-numbers keys are entered, the cursor moves to the right-most; it now stays in the same position;<br/>
-+updated: icon<br/>
+The demo spreadsheet was generated according to [this](https://github.com/usbong/workbook/blob/main/workbook/templates/ExpensesTemplate.csv) template file.
 
 # Get PhilNITS Certified!
 
