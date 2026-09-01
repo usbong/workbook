@@ -4,6 +4,15 @@ http://store.usbong.ph/server/workbook/workbook.php
 
 The demo spreadsheet was generated according to [this](https://github.com/usbong/workbook/blob/main/workbook/templates/ExpensesTemplate.csv) template file.
 
+## Desktop
+
+<img src="https://github.com/usbong/workbook/blob/main/screenshots/usbongWorkbookScreenshot20260901.png" width="100%">
+
+## iPad
+
+<img src="https://github.com/usbong/workbook/blob/main/screenshots/usbongWorkbookScreenshotIpad20260901.png" width="100%">
+
+
 # Get PhilNITS Certified!
 
 https://philnits.org/
