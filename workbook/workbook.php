@@ -7,7 +7,7 @@
   @company: USBONG
   @author: SYSON, MICHAEL B.
   @date created: 20200522
-  @date updated: 20260831; from 20260828
+  @date updated: 20260901; from 20260831
   
   Input:
   1) Summary Worksheet with counts and amounts in .csv (comma-separated value) file at the Accounting/Cashier Unit
@@ -57,6 +57,12 @@
 						{
 							text-align: center;
 						}
+
+						div.divDemoVersion
+						{
+							margin-top: 0.5em;
+							text-align: center;
+						}						
 						
 						img.Image-companyLogo {
 							max-width: 60%;
@@ -89,14 +95,16 @@
 
 						td.column
 						{
+							width: 100%;
+							height: 100%;
 							border: 1px dotted #ab9c7d;		
-							text-align: left;					
+							border-radius: 0px;
 						}	
 
 						td.columnDate
 						{
-							width: 40px;
-							height: 20px;
+							width: 50%;
+							height: 100%;
 							
 							margin: 0;
 							padding: 1.5px;
@@ -137,9 +145,9 @@
 						}
 						
 						td.columnAmtPaid
-						{
+						{						
 							width: 40px;
-							height: 20px;
+							height: 100%;
 							
 							padding: 0;
 							margin: 0;
@@ -154,22 +162,9 @@
 
 						td.columnTotal
 						{
-							/*border-top: 2px solid #111111;*/
+							border: 1px dotted #ab9c7d;	
 							text-align: right;
 							font-weight: bold;
-						}
-
-						td.columnDirectPaymentTotal
-						{
-							border-top: 2px solid #111111;		
-							border-bottom: 2px solid #111111; /*#ab9c7d;*/		
-							text-align: right;
-						}
-						
-						td.columnGrandTotal
-						{
-							border-bottom: 2px solid #111111; /*#ab9c7d;*/		
-							text-align: right;
 						}
 
 						td.columnBorderBottom
@@ -210,7 +205,7 @@
 						input.inputAnswerNum
 						{
 							width: 60px;
-							height: 20px;
+							height: 100%;
 							
 /*							
 							margin-top: 2px;
@@ -222,13 +217,14 @@
 							font-family: Arial;
 							font-size: 1rem;
 
+							border-radius: 0px;
 							text-align: right;
 						}
 
 						input.inputAnswerQty
 						{
 							width: 30px;
-							height: 20px;
+							height: 100%;
 							
 /*							
 							margin-top: 2px;
@@ -240,14 +236,15 @@
 							font-family: Arial;
 							font-size: 1rem;
 
+							border-radius: 0px;
 							text-align: right;
 						}
 
 						input.inputAnswerAmtPaid
 						{							
 							width: 75px;
-							height: 20px;
-						
+							height: 100%;
+							
 /*							
 							margin-top: 2px;
 							margin-bottom: 4px;
@@ -258,6 +255,7 @@
 							font-family: Arial;
 							font-size: 1rem;
 
+							border-radius: 0px;
 							text-align: right;
 
 /*														
@@ -271,7 +269,7 @@
 						input.inputCount
 						{
 							width: 20px;
-							height: 20px;
+							height: 100%;
 							
 /*							
 							margin-top: 2px;
@@ -283,6 +281,7 @@
 							font-family: Arial;
 							font-size: 1rem;
 
+							border-radius: 0px;
 							text-align: right;
 							
 							border-bottom: 1.5px solid #444444;
@@ -294,7 +293,7 @@
 						input.inputDate
 						{
 							width: 100px;
-							height: 20px;
+							height: 100%;
 							
 							margin: 0;
 							padding: 0;
@@ -302,6 +301,7 @@
 							font-family: Arial;
 							font-size: 1rem;
 
+							border-radius: 0px;
 							text-align: right;
 							
 							border-bottom: 1.5px solid #444444;
@@ -313,7 +313,7 @@
 						input.inputAnswer
 						{
 							width: 125px;
-							height: 20px;
+							height: 100%;
 							
 /*							
 							margin-top: 2px;
@@ -325,11 +325,13 @@
 							font-family: Arial;
 							font-size: 1rem;
 
+							border-radius: 0px;
 							text-align: right;
 						}				
 
 						td.columnTotalLabel
 						{
+							border: 1px dotted #ab9c7d;	
 							font-weight: bold;
 							/*background-color: #00DD00;*/
 							text-align: center;
@@ -343,7 +345,7 @@
     /**/
     </style>
     <title>
-      Summary Report for the End Week
+      Weekly Expenses Report
     </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style type="text/css">
@@ -364,7 +366,7 @@
 		function onLoad() {
 			bIsActionKeyShiftPressed=false;
 
-			for (iRowCount=2; iRowCount<=8; iRowCount++) {
+			for (iRowCount=1; iRowCount<ROW_COUNT_MAX; iRowCount++) {
 				processCellInput(iRowCount);
 			}
 			
@@ -561,7 +563,7 @@
 			//-----------------------------
 			//added by Mike, 20260825
 			iAmtPaidTotal=0;
-			for (iRowCount=1; iRowCount<=8; iRowCount++) {
+			for (iRowCount=1; iRowCount<ROW_COUNT_MAX; iRowCount++) {
 				iAmtPaidTotal += Number(document.getElementById("cellInputId"+iRowCount+"-"+AMT_PAID_COLUMN).value);
 			}
 			
@@ -658,7 +660,7 @@
 							echo "<td class='columnDate'>".$sStartDate."</td>";
 /*							
 							echo "<td class='column'>";
-								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputDate' value='".$sStartDate."' min='' max='' autofocus readonly required>";
+								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputDate' value='".$sStartDate."' min='' max=''  readonly required>";
 							echo "</td>";							
 */							
 						}
@@ -666,40 +668,44 @@
 							echo "<td class='columnDate'>".$sEndDate."</td>";
 /*														
 							echo "<td class='column'>";
-								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputDate' value='".$sEndDate."' min='' max='' autofocus readonly required>";
+								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputDate' value='".$sEndDate."' min='' max=''  readonly required>";
 							echo "</td>";							
 */							
 						}
 						else if ($iColumnCount==$COUNT_COLUMN) {
 /*
 							echo "<td class='columnCount'>";
-								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputCount' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")' autofocus readonly required>";
+								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputCount' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")'  readonly required>";
 							echo "</td>";
 */							
 							echo "<td class='columnCount'>".$cellValue."</td>";
 						}								
 						else if ($iColumnCount==$FEE_COLUMN) {
 							echo "<td class='column'>";
-								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswerNum' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")' autofocus required>";
+								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswerNum' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")'  required>";
 							echo "</td>";
 						}
 						else if ($iColumnCount==$QTY_COLUMN) {
 							echo "<td class='column'>";
-								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswerQty' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")' autofocus required>";
+								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswerQty' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")'  required>";
 							echo "</td>";
 						}
 						else if ($iColumnCount==$AMT_PAID_COLUMN) {
 /*							
 							echo "<td id='amtPaidId".$iRowCount."-".$iColumnCount."' class='columnAmtPaid'>".$cellValue."</td>";
 */							
+
 							echo "<td class='columnAmtPaid'>";
-								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswerAmtPaid' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")' autofocus readonly required>";
+								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswerAmtPaid' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")'  readonly required>";
 							echo "</td>";
+/*
+						echo "<td id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswerAmtPaid'>".$cellValue."</td>";	
+*/						
 						}						
 						else {
 											
 							echo "<td class='column'>";
-								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswer' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")' autofocus required>";
+								echo "<input type='text' id='cellInputId".$iRowCount."-".$iColumnCount."' class='inputAnswer' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iRowCount.",".$iColumnCount.")'  required>";
 							echo "</td>";
 							
 							
@@ -737,7 +743,7 @@
 
 ?>
 	</table>
-	<div class="copyright">
+	<div class="divDemoVersion">
 <!--
 		<span>© <b>www.usbong.ph</b> 2011~<?php echo date("Y");?>. All rights reserved.</span>
 -->
