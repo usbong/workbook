@@ -4,14 +4,17 @@ http://store.usbong.ph/server/workbook/workbook.php
 
 The demo spreadsheet was generated according to [this](https://github.com/usbong/workbook/blob/main/workbook/templates/ExpensesTemplate.csv) template file.
 
-## Desktop
+# Desktop
 
-<img src="https://github.com/usbong/workbook/blob/main/screenshots/usbongWorkbookScreenshot20260901.png" width="100%">
+<img src="https://github.com/usbong/workbook/blob/main/screenshots/usbongWorkbookScreenshot20260902.png" width="100%">
 
-## iPad
+# iPad
 
-<img src="https://github.com/usbong/workbook/blob/main/screenshots/usbongWorkbookScreenshotIpad20260901.png" width="100%">
+<img src="https://github.com/usbong/workbook/blob/main/screenshots/usbongWorkbookScreenshotIPad20260902.png" width="100%">
 
+# Android Mobile (Zoomed Out)
+
+<img src="https://github.com/usbong/workbook/blob/main/screenshots/usbongWorkbookScreenshotAndroidMobile20260902.jpg" width="50%">
 
 # Get PhilNITS Certified!
 
