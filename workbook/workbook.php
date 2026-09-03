@@ -86,24 +86,35 @@
 <!--							border: 1px solid #ab9c7d;		
 -->
 						}						
+						
+						table.summaryReportTable
+						{
+							/*visibility: hidden;*/
+							visibility: visible;
+							display: none;
+						}
 
 						td.tableHeaderColumn
 						{
+							width: fit-content;
+							height: 100%;
+							
 							border: 1px dotted #ab9c7d;		
 							text-align: center;
 						}						
 
-						td.column
+						td, .column
 						{
-							width: 100%;
+							width: fit-content;
 							height: 100%;
+							
 							border: 1px dotted #ab9c7d;		
 							border-radius: 0px;
 						}	
 
 						td.columnDate
 						{
-							width: 50%;
+							width: fit-content;
 							height: 100%;
 							
 							margin: 0;
@@ -126,6 +137,29 @@
 
 						td.columnCount
 						{
+							margin: 0;
+							padding: 0;
+							
+							font-family: Arial;
+							font-size: 1rem;
+
+							text-align: center;
+							
+							border-bottom: 1.5px solid #444444;
+							border-right: 1.5px solid #444444;
+/*							
+							border: 1px dotted #000000;		
+*/
+							border: 1px solid #000000;		
+
+							background-color: #EDE6E6;
+						}
+
+						td.columnWeekCount
+						{
+							width: fit-content;
+							height: auto;
+							
 							margin: 0;
 							padding: 0;
 							
@@ -341,7 +375,29 @@
 							font-weight: bold;
 							background-color: #00DD00;
 							text-align: left;
-						}						
+						}
+
+						h3
+						{
+							margin: 0;
+							margin-bottom: 0.5em;
+
+							padding: 0;
+						}
+
+						button.buttonSummary, .buttonWorkbook
+						{
+							margin: 0;
+							padding-left: 0.25em;
+							padding-right: 0.25em;
+							padding-bottom: 0.25em;
+
+							font-size: 12pt;
+							
+							border: 1px solid #ab9c7d;	
+							border-radius: 2px;
+							color: #000000;
+						}
     /**/
     </style>
     <title>
@@ -359,172 +415,13 @@
 		
 		const COLUMN_COUNT_MAX=8;
 		const ROW_COUNT_MAX=11;
-
 		
+		const WORKBOOK_TAB=0;			
+		const SUMMARY_TAB=1;
+		var iCurrTab=WORKBOOK_TAB;
+
 		var bIsActionKeyShiftPressed=false;
 			
-		function onLoadPREV() {
-			bIsActionKeyShiftPressed=false;
-
-			for (iRowCount=1; iRowCount<ROW_COUNT_MAX; iRowCount++) {
-				processCellInput(iRowCount);
-			}
-			
-			document.body.onkeyup = function(e){
-				if (e.keyCode==16) { //key shift
-				//if (e.keyCode==17) { //key control
-					bIsActionKeyShiftPressed=false;
-				}
-			}
-			
-			document.body.onkeyup = function(e){
-				bIsActionKeyShiftPressed=false;
-			}
-			
-			document.body.onkeydown = function(e){
-				const focusedElement = document.activeElement;
-
-				//alert("e.keyCode: "+e.keyCode);
-
-				//note if shift pressed with right-click; menu still appears
-				if (e.keyCode==16) { //key shift
-				//if (e.keyCode==17) { //key control
-					bIsActionKeyShiftPressed=true;
-				}
-
-				if (bIsActionKeyShiftPressed) {
-					return;
-				}
-
-				if (e.keyCode==38) { //key up
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-						var iCurrRowIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("Id")+2,focusedElement.id.indexOf("-")));
-						
-						var iCurrColumnIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-")+1));
-						
-						//alert(focusedElement.id);
-						//alert(focusedElement.id.indexOf("Id"));
-						
-						//alert("iCurrRowIndex: "+iCurrRowIndex);
-						//alert("iCurrColumnIndex: "+iCurrColumnIndex);
-						
-						iCurrRowIndex-=1;
-
-						if (iCurrRowIndex<1) {
-							iCurrRowIndex=1;
-						}
-						
-						var cellInput = document.getElementById("cellInputId"+iCurrRowIndex+"-"+iCurrColumnIndex);
-
-						cellInput.focus();
-					}				
-				}
-				//else if (e.keyCode==40) { //key down
-				else if ((e.keyCode==40) || (e.keyCode==13)) { //key down OR ENTER
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-						var iCurrRowIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("Id")+2,focusedElement.id.indexOf("-")));
-						
-						var iCurrColumnIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-")+1));
-						
-						//alert(iCurrRowIndex);
-						
-						iCurrRowIndex+=1;
-
-						if (iCurrRowIndex>17) {
-							iCurrRowIndex=17;
-						}
-
-						//alert(">>"iCurrRowIndex);
-						
-						var cellInput = document.getElementById("cellInputId"+iCurrRowIndex+"-"+iCurrColumnIndex);
-						
-						cellInput.focus();
-					}
-				}
-				else if (e.keyCode==39) { //key right
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-						var iCurrRowIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("Id")+2,focusedElement.id.indexOf("-")));
-						
-						var iCurrColumnIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-")+1));
-						
-						//alert(focusedElement.id);
-						//alert(focusedElement.id.indexOf("Id"));
-						
-						//alert("iCurrRowIndex: "+iCurrRowIndex);
-						//alert("iCurrColumnIndex: "+iCurrColumnIndex);
-						
-						//iCurrRowIndex-=1;
-
-						//CURR POSITION
-						var currCellInput = document.getElementById("cellInputId"+iCurrRowIndex+"-"+iCurrColumnIndex);							
-						const cursorPosition = e.target.selectionStart;
-/*						
-						alert("cursorPosition: "+cursorPosition);
-						alert("currCellInput: "+currCellInput.value.length);
-*/						
-						//if (cursorPosition==currCellInput.value.length) {
-						if ((cursorPosition==currCellInput.value.length) || (iCurrColumnIndex==AMT_PAID_COLUMN) || (iCurrColumnIndex==COUNT_COLUMN)) {
-							//NEW POSITION
-							iCurrColumnIndex+=1;
-
-							if (iCurrColumnIndex>COLUMN_COUNT_MAX) {
-								iCurrColumnIndex=COLUMN_COUNT_MAX;
-							}
-							
-							var cellInput = document.getElementById("cellInputId"+iCurrRowIndex+"-"+iCurrColumnIndex);	
-													
-							cellInput.focus();
-						}
-					}				
-				}				
-				else if (e.keyCode==37) { //key left
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-						var iCurrRowIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("Id")+2,focusedElement.id.indexOf("-")));
-						
-						var iCurrColumnIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-")+1));
-						
-						//alert(focusedElement.id);
-						//alert(focusedElement.id.indexOf("Id"));
-						
-						//alert("iCurrRowIndex: "+iCurrRowIndex);
-						//alert("iCurrColumnIndex: "+iCurrColumnIndex);
-						
-						//iCurrRowIndex-=1;
-						
-						//CURR POSITION
-						var currCellInput = document.getElementById("cellInputId"+iCurrRowIndex+"-"+iCurrColumnIndex);							
-						const cursorPosition = e.target.selectionStart;
-/*						
-						alert("cursorPosition: "+cursorPosition);
-						alert("currCellInput: "+currCellInput.value.length);
-*/						
-						//if (cursorPosition==0) {//currCellInput.value.length) {
-						if ((cursorPosition==0) || (iCurrColumnIndex==AMT_PAID_COLUMN) || (iCurrColumnIndex==COUNT_COLUMN)) {//currCellInput.value.length) {
-
-							//NEW POSITION
-							iCurrColumnIndex-=1;
-
-							if (iCurrColumnIndex<2) {
-								iCurrColumnIndex=2;
-							}
-							
-							var cellInput = document.getElementById("cellInputId"+iCurrRowIndex+"-"+iCurrColumnIndex);	
-							
-							cellInput.focus();
-						}
-					}				
-				}	
-			}			
-		}
-
 		function onLoad() {
 			bIsActionKeyShiftPressed=false;
 			
@@ -552,167 +449,200 @@
 
 				//alert("e.keyCode: "+e.keyCode);
 				
-				//cellInputId1-1-4						
-				var iWeekCount = Number(focusedElement.id.substring(focusedElement.id.indexOf("Id")+2,focusedElement.id.indexOf("-")));
-
-				var iCurrRowIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-")+1,focusedElement.id.indexOf("-",focusedElement.id.indexOf("-")+1)));
-
-				var iCurrColumnIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-",focusedElement.id.indexOf("-")+1)+1));			
-								
-				//note if shift pressed with right-click; menu still appears
-				if (e.keyCode==16) { //key shift
-				//if (e.keyCode==17) { //key control
-					bIsActionKeyShiftPressed=true;
-				}
-
-				if (bIsActionKeyShiftPressed) {
-					return;
-				}
+				if (iCurrTab==WORKBOOK_TAB) {
 				
-				if (e.keyCode==38) { //key up
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-/*
-						alert("iWeekCount: "+iWeekCount);
-						alert("iCurrRowIndex: "+iCurrRowIndex);
-						alert("iCurrColumnIndex: "+iCurrColumnIndex);
-*/
-						
-						iCurrRowIndex-=1;
+					//cellInputId1-1-4						
+					var iWeekCount = Number(focusedElement.id.substring(focusedElement.id.indexOf("Id")+2,focusedElement.id.indexOf("-")));
 
-						if (iCurrRowIndex<1) {
-							iCurrRowIndex=1;
-						}
-						
-						var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);
+					var iCurrRowIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-")+1,focusedElement.id.indexOf("-",focusedElement.id.indexOf("-")+1)));
 
-						cellInput.focus();
-					}				
-				}
-				//else if (e.keyCode==40) { //key down
-				else if ((e.keyCode==40) || (e.keyCode==13)) { //key down OR ENTER
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-						iCurrRowIndex+=1;
+					var iCurrColumnIndex = Number(focusedElement.id.substring(focusedElement.id.indexOf("-",focusedElement.id.indexOf("-")+1)+1));			
+									
+					//note if shift pressed with right-click; menu still appears
+					if (e.keyCode==16) { //key shift
+					//if (e.keyCode==17) { //key control
+						bIsActionKeyShiftPressed=true;
+					}
+
+					if (bIsActionKeyShiftPressed) {
+						return;
+					}
 					
-						if (iCurrRowIndex>ROW_COUNT_MAX) {
-							iCurrRowIndex=ROW_COUNT_MAX;
-						}
+					if (e.keyCode==38) { //key up
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+	/*
+							alert("iWeekCount: "+iWeekCount);
+							alert("iCurrRowIndex: "+iCurrRowIndex);
+							alert("iCurrColumnIndex: "+iCurrColumnIndex);
+	*/
+							
+							iCurrRowIndex-=1;
 
-						//alert(">>"iCurrRowIndex);
+							if (iCurrRowIndex<1) {
+								iCurrRowIndex=1;
+							}
+							
+							var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);
+
+							cellInput.focus();
+						}				
+					}
+					//else if (e.keyCode==40) { //key down
+					else if ((e.keyCode==40) || (e.keyCode==13)) { //key down OR ENTER
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+							iCurrRowIndex+=1;
 						
-						var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);
-						
-						cellInput.focus();
+							if (iCurrRowIndex>ROW_COUNT_MAX) {
+								iCurrRowIndex=ROW_COUNT_MAX;
+							}
+
+							//alert(">>"iCurrRowIndex);
+							
+							var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);
+							
+							cellInput.focus();
+						}
+					}
+					else if (e.keyCode==39) { //key right
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+							//CURR POSITION
+							var currCellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);							
+							const cursorPosition = e.target.selectionStart;
+	/*						
+							alert("cursorPosition: "+cursorPosition);
+							alert("currCellInput: "+currCellInput.value.length);
+	*/						
+							//if (cursorPosition==currCellInput.value.length) {
+							if ((cursorPosition==currCellInput.value.length) || (iCurrColumnIndex==AMT_PAID_COLUMN) || (iCurrColumnIndex==COUNT_COLUMN)) {
+								//NEW POSITION
+								iCurrColumnIndex+=1;
+
+								if (iCurrColumnIndex>COLUMN_COUNT_MAX) {
+									iCurrColumnIndex=COLUMN_COUNT_MAX;
+								}
+								
+								var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);	
+														
+								cellInput.focus();
+							}
+						}				
+					}				
+					else if (e.keyCode==37) { //key left
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+							//CURR POSITION
+							var currCellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);							
+							const cursorPosition = e.target.selectionStart;
+
+							//if (cursorPosition==0) {//currCellInput.value.length) {
+							if ((cursorPosition==0) || (iCurrColumnIndex==AMT_PAID_COLUMN) || (iCurrColumnIndex==COUNT_COLUMN)) {//currCellInput.value.length) {
+
+								//NEW POSITION
+								iCurrColumnIndex-=1;
+
+								if (iCurrColumnIndex<2) {
+									iCurrColumnIndex=2;
+								}
+								
+								var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);	
+								
+								cellInput.focus();
+							}
+						}				
+					}	
+				}			
+				else {
+					//alert("HERE!!");
+					//var summaryGrandTotalAvePerWeekColumn = document.getElementById("summaryGrandTotalAvePerWeekColumnId");
+
+					iSummaryWeekCount=Number(focusedElement.id.substring(focusedElement.id.indexOf("Id")+2));
+					
+					if (e.keyCode==38) { //key up
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+							if (focusedElement.id=="summaryGrandTotalAvePerWeekColumnId") {
+								return;
+							}
+							
+	/*
+							alert("iWeekCount: "+iWeekCount);
+							alert("iCurrRowIndex: "+iCurrRowIndex);
+							alert("iCurrColumnIndex: "+iCurrColumnIndex);
+	*/
+							
+							//alert("focusedElement.id"+focusedElement.id);
+							//alert(iSummaryWeekCount);
+							
+							iSummaryWeekCount-=1;
+
+							if (iSummaryWeekCount<1) {
+								iSummaryWeekCount=1;
+							}
+							
+							var cellInput = document.getElementById("summaryTotalColumnId"+iSummaryWeekCount);
+
+							cellInput.focus();
+						}				
+					}
+					//else if (e.keyCode==40) { //key down
+					else if ((e.keyCode==40) || (e.keyCode==13)) { //key down OR ENTER
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+							if (focusedElement.id=="summaryGrandTotalAvePerWeekColumnId") {
+								return;
+							}
+							
+							var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);
+							
+							iSummaryWeekCount+=1;
+
+							if (iSummaryWeekCount>iWeekCountMax) {
+								iSummaryWeekCount=iWeekCountMax;
+							}
+							
+							var cellInput = document.getElementById("summaryTotalColumnId"+iSummaryWeekCount);							
+							cellInput.focus();
+						}
 					}
 				}
-				else if (e.keyCode==39) { //key right
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-						//CURR POSITION
-						var currCellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);							
-						const cursorPosition = e.target.selectionStart;
-/*						
-						alert("cursorPosition: "+cursorPosition);
-						alert("currCellInput: "+currCellInput.value.length);
-*/						
-						//if (cursorPosition==currCellInput.value.length) {
-						if ((cursorPosition==currCellInput.value.length) || (iCurrColumnIndex==AMT_PAID_COLUMN) || (iCurrColumnIndex==COUNT_COLUMN)) {
-							//NEW POSITION
-							iCurrColumnIndex+=1;
-
-							if (iCurrColumnIndex>COLUMN_COUNT_MAX) {
-								iCurrColumnIndex=COLUMN_COUNT_MAX;
-							}
-							
-							var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);	
-													
-							cellInput.focus();
-						}
-					}				
-				}				
-				else if (e.keyCode==37) { //key left
-					//reference; Google AI Overview; stackoverflow
-					//if active element is INPUT;
-					if (focusedElement && focusedElement.tagName === "INPUT") {
-						//CURR POSITION
-						var currCellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);							
-						const cursorPosition = e.target.selectionStart;
-
-						//if (cursorPosition==0) {//currCellInput.value.length) {
-						if ((cursorPosition==0) || (iCurrColumnIndex==AMT_PAID_COLUMN) || (iCurrColumnIndex==COUNT_COLUMN)) {//currCellInput.value.length) {
-
-							//NEW POSITION
-							iCurrColumnIndex-=1;
-
-							if (iCurrColumnIndex<2) {
-								iCurrColumnIndex=2;
-							}
-							
-							var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);	
-							
-							cellInput.focus();
-						}
-					}				
-				}	
-			}			
-		}
-
-		function processCellInputPREV(iRowCount, iColumnCount) {
-			//alert(iRowCount);
-			var cellInput = document.getElementById("cellInputId"+iRowCount+"-"+iColumnCount);			
-
-			var feeCell = document.getElementById("cellInputId"+iRowCount+"-"+FEE_COLUMN);
-			var qtyCell = document.getElementById("cellInputId"+iRowCount+"-"+QTY_COLUMN);
-			var amtPaidCell = document.getElementById("cellInputId"+iRowCount+"-"+AMT_PAID_COLUMN);
-
-			var grandTotal = document.getElementById("grandTotalId");
-
-/*
-			alert("iRowCount: "+iRowCount);
-			alert("iColumnCount: "+iColumnCount);
-*/
-
-			if (Number.isNaN(Number(feeCell.value))) {
-				feeCell.value="0";
 			}
-			
-			if (Number.isNaN(Number(qtyCell.value))) {
-				qtyCell.value="0";
-			}			
-			
-			fOutput = (Number(feeCell.value)*Number(qtyCell.value));//.toFixed(2);
-			
-			amtPaidCell.value=fOutput;
 
 /*			
-			alert("fOutput: "+fOutput);
-			alert(amtPaidCell.value);
-*/			
+			//buggy
+			document.body.addEventListener('touchend', (event) => {	
+			//document.body.addEventListener('pointerup', (event) => {	
+				const focusedElement = document.activeElement;
 
-			//-----------------------------
-			//TOTAL PART
-			//-----------------------------
-			//added by Mike, 20260825
-			iAmtPaidTotal=0;
-			for (iRowCount=1; iRowCount<ROW_COUNT_MAX; iRowCount++) {
-				iAmtPaidTotal += Number(document.getElementById("cellInputId"+iRowCount+"-"+AMT_PAID_COLUMN).value);
-			}
-			
-			//alert(iAmtPaidTotal);
-			
-			grandTotal.innerHTML=(iAmtPaidTotal);//.toFixed(2);
-			
-			//return;
+				//alert("e.keyCode: "+e.keyCode);
+				switch(event.pointerType) {
+					//case 'mouse':
+					case 'touch': //displayed twice on iPad; also not when the focusedElement is touched;
+						if (iCurrTab==WORKBOOK_TAB) {
+						}
+						else {
+							if (focusedElement.id=="summaryGrandTotalAvePerWeekColumnId") {
+								alert("THIS IS THE WEEKLY AVERAGE.");
+								//return;
+							}
+						}
+						break;
+				}
+			});
+*/			
 		}
 
 		function processCellInput(iWeekCount, iRowCount, iColumnCount) {
 			//alert(iRowCount);
 			var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iRowCount+"-"+iColumnCount);			
-
 			var feeCell = document.getElementById("cellInputId"+iWeekCount+"-"+iRowCount+"-"+FEE_COLUMN);
 			var qtyCell = document.getElementById("cellInputId"+iWeekCount+"-"+iRowCount+"-"+QTY_COLUMN);
 			var amtPaidCell = document.getElementById("cellInputId"+iWeekCount+"-"+iRowCount+"-"+AMT_PAID_COLUMN);
@@ -757,9 +687,69 @@
 			
 			//return;
 		}		
+		
+		function processSummary() {
+			var tableSummaryReport = document.getElementById("tableSummaryReportId");
+			var iWeekCountMax = document.getElementById("weekCountMaxId").value;	
+			
+			var iGrandTotal=0;
+			var iGrandTotalAvePerWeek=0;
+			
+			iCurrTab=SUMMARY_TAB;
+
+			for (iWeekCount=1; iWeekCount<iWeekCountMax; iWeekCount++) {
+				var tableWeeklyExpensesReport = document.getElementById("tableWeeklyExpensesReportId"+iWeekCount);
+				var grandTotal = document.getElementById("grandTotalId"+iWeekCount);
+				var summaryTotalColumn = document.getElementById("summaryTotalColumnId"+iWeekCount);
+				var summaryGrandTotalColumn = document.getElementById("summaryGrandTotalColumnId");
+				var summaryGrandTotalAvePerWeekColumn = document.getElementById("summaryGrandTotalAvePerWeekColumnId");
+				
+				//alert(grandTotal.innerHTML);
+				//alert(summaryTotalColumn.value);
+
+				summaryTotalColumn.value=grandTotal.innerHTML;
+				
+				iGrandTotal+=Number(grandTotal.innerHTML);
+				
+				//tableWeeklyExpensesReport.style.visibility="hidden";
+				tableWeeklyExpensesReport.style.display="none";
+			}
+			
+			iGrandTotalAvePerWeek=iGrandTotal/(iWeekCountMax-1);
+			
+			//alert(iGrandTotal.toFixed(2));
+			summaryGrandTotalColumn.innerHTML=iGrandTotal.toFixed(2);
+			//summaryGrandTotalAvePerWeekColumn.innerHTML=iGrandTotalAvePerWeek.toFixed(2);
+			summaryGrandTotalAvePerWeekColumn.value=iGrandTotalAvePerWeek.toFixed(2);
+
+			//tableSummaryReport.style.visibility="visible";
+			tableSummaryReport.style.display="inline-block";
+		}
+		
+		function processWorkbook() {
+			var tableSummaryReport = document.getElementById("tableSummaryReportId");
+			var iWeekCountMax = document.getElementById("weekCountMaxId").value;	
+			
+			iCurrTab=WORKBOOK_TAB;
+
+			for (iWeekCount=1; iWeekCount<iWeekCountMax; iWeekCount++) {
+				var tableWeeklyExpensesReport = document.getElementById("tableWeeklyExpensesReportId"+iWeekCount);
+				//tableWeeklyExpensesReport.style.visibility="visible";
+				tableWeeklyExpensesReport.style.display="inline-block";
+			}
+
+			//tableSummaryReport.style.visibility="hidden";
+			tableSummaryReport.style.display="none";
+		}
 	  </script>
   <body onload="onLoad();">
+  <h3>Weekly Expenses Report | <button class="buttonSummary" onclick="processSummary();">Summary</button> <button class="buttonWorkbook" onclick="processWorkbook();">Workbook</button></h3>
+    
 <?php
+	//------------------------------------
+	// Workbook
+	//------------------------------------
+	
 	date_default_timezone_set('Asia/Hong_Kong');
 	
 	$COUNT_COLUMN=2;
@@ -827,7 +817,7 @@
 		$iStartDateYear=intval($sStartDateYear);
 		//----------------------------
 		
-		echo "<table>";
+		echo "<table id='tableWeeklyExpensesReportId".$iWeekCount."'>";
 		echo '<tr class="row">';
 
 		ini_set('auto_detect_line_endings', true);
@@ -973,6 +963,181 @@
 	
 	$iWeekCount++;
 ?>
+
+<?php
+	//------------------------------------
+	// Summary
+	//------------------------------------
+	
+	date_default_timezone_set('Asia/Hong_Kong');
+	
+	$SUMMARY_WEEK_COUNT_COLUMN=0;
+	$SUMMARY_START_DATE_COLUMN=1;
+	$SUMMARY_END_DATE_COLUMN=2;
+	$SUMMARY_TOTAL_COLUMN=3;
+	
+	$SUMMARY_COLUMN_COUNT_MAX=4;
+	$SUMMARY_ROW_COUNT_MAX=2;//$iWeekCount;
+	
+	//WINDOWS machine
+	if (strpos(dirname(__DIR__), ":\\")!==false) {
+		//$filename="C:\\xampp\\htdocs\\usbong_newsletters\\server\\templates\\ExpensesTemplate.csv";
+		$filename="templates\\ExpensesTemplateTotal.csv";
+	}
+	//LINUX machine
+	else {				
+		$filename="./templates/ExpensesTemplateTotal.csv";
+	}
+			
+	date_default_timezone_set('Asia/Hong_Kong');
+
+	$sDateToday = date("Y-m-d", strtotime(date("Y-m-d")));
+	$sDateTodayTransactionFormat = date("m/d/Y", strtotime(date("Y-m-d")));
+
+	$iSummaryWeekCount=0;
+	
+	//----------------------------
+	$iCurrDayOfTheWeek=date("N"); //day of the week; 7 is Sunday;
+
+	$sCurrDateYear = date("Y");
+	//echo $sCurrDateYear."<br/>";
+	//echo (intval($sCurrDateYear)-1)."<br/>";
+
+	$iCurrYear=intval($sCurrDateYear);
+	$iPrevYear=intval($sCurrDateYear)-1;
+
+	do {
+		$iSummaryWeekCount++;
+		
+		//edited by Mike, 20260902
+		//$sEndDate = date("M-d-Y", strtotime(date("M-d-Y")."-".$iCurrDayOfTheWeek." Day"));
+
+		$sEndDate = date("M-d-Y", strtotime(date("M-d-Y")."-".($iCurrDayOfTheWeek+(7*($iSummaryWeekCount-1)))." Day"));
+		
+		$sEndDateYear = date("Y", strtotime(date("M-d-Y")."-".($iCurrDayOfTheWeek+(7*($iSummaryWeekCount-1)))." Day"));
+		
+		$iEndDateYear=intval($sEndDateYear);
+
+		$sStartDate = date("M-d-Y", strtotime(date("M-d-Y")."-".($iCurrDayOfTheWeek+(7*$iSummaryWeekCount-1))." Day"));
+		
+		$sStartDateYear = date("Y", strtotime(date("M-d-Y")."-".($iCurrDayOfTheWeek+(7*$iSummaryWeekCount-1))." Day"));
+		
+		$iStartDateYear=intval($sStartDateYear);
+		//----------------------------
+		
+		if ($iSummaryWeekCount==1) { //create only 1 table
+			echo "<table class='summaryReportTable' id='tableSummaryReportId'>";
+		}
+		
+		echo '<tr class="row">';
+
+		ini_set('auto_detect_line_endings', true);
+
+		if (!file_exists($filename)) {
+			//$sDateToday = Date('Y-m-d, l');
+
+			echo $filename." not found.";
+
+			//echo "ExpensesTemplateTotal.csv not found.";
+		}
+		else {
+			//Reference: https://stackoverflow.com/questions/9139202/how-to-parse-a-csv-file-using-php;
+			//answer by: thenetimp, 20120204T0730
+			//edited by: thenetimp, 20170823T1704
+
+			$iRowCount = -1; //we later add 1 to make start value zero (0)
+			//if (($handle = fopen("test.csv", "r")) !== FALSE) {
+			if (($handle = fopen($filename, "r")) !== FALSE) {
+			  while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+				$num = count($data) -1; //we add -1 for the computer to not include the excess cell due to the ending \n
+
+			//    echo "<p> $num fields in line $row: <br /></p>\n";
+
+				$iRowCount++;
+				for ($iColumnCount=0; $iColumnCount <= $num; $iColumnCount++) {
+					$cellValue = utf8_encode($data[$iColumnCount]);
+					
+					if (($iRowCount==0)) {
+						if ($iSummaryWeekCount==1) { //add header if it's the first one;
+							//if (($iColumnCount>=0) and ($iColumnCount<=$SUMMARY_COLUMN_COUNT_MAX)) {
+							if (($iColumnCount>=0) and ($iColumnCount<=$SUMMARY_COLUMN_COUNT_MAX-1)) {
+
+								//background color sky blue
+								echo "<td class='tableHeaderColumn' bgcolor='#00A2E8'><b>".$cellValue."</b></td>";
+							}
+							else {
+								echo "<td class='column'>".$cellValue."</td>";
+							}
+						}
+					}
+					else if (($iRowCount>=1) && ($iRowCount<$SUMMARY_ROW_COUNT_MAX)) {
+							//echo "START: ".$sStartDate."<br/>";
+
+							if ($iColumnCount==$SUMMARY_WEEK_COUNT_COLUMN) {
+								//echo "<td class='columnCount'>".$iSummaryWeekCount."</td>";
+								echo "<td class='columnWeekCount'>".($iWeekCount-$iSummaryWeekCount)."</td>";
+
+							}
+							else if ($iColumnCount==$SUMMARY_START_DATE_COLUMN) {
+								echo "<td class='columnDate'>".$sStartDate."</td>";
+							}
+							else if ($iColumnCount==$SUMMARY_END_DATE_COLUMN) {
+								echo "<td class='columnDate'>".$sEndDate."</td>";
+	/*														
+								echo "<td class='column'>";
+									echo "<input type='text' id='cellInputId".$iWeekCount."-".$iRowCount."-".$iColumnCount."' class='inputDate' value='".$sEndDate."' min='' max=''  readonly required>";
+								echo "</td>";							
+	*/							
+							}
+							else if ($iColumnCount==$SUMMARY_TOTAL_COLUMN) {
+	/*							
+								echo "<td id='amtPaidId".$iRowCount."-".$iColumnCount."' class='columnAmtPaid'>".$cellValue."</td>";
+	*/							
+/*
+								echo "<td class='columnAmtPaid'>";
+									echo "<input type='text' id='cellInputId".$iWeekCount."-".$iRowCount."-".$iColumnCount."' class='inputAnswerAmtPaid' value='".$cellValue."' min='' max='' oninput='processCellInput(".$iWeekCount.",".$iRowCount.",".$iColumnCount.")'  readonly required>";
+								echo "</td>";
+*/								
+								echo "<td class='columnAmtPaid'>";
+									echo "<input type='text' id='summaryTotalColumnId".$iSummaryWeekCount."' class='inputAnswerAmtPaid' value='".$cellValue."' min='' max='' oninput=''  readonly required>";
+								echo "</td>";
+								
+	/*
+							echo "<td id='cellInputId".$iWeekCount."-".$iRowCount."-".$iColumnCount."' class='inputAnswerAmtPaid'>".$cellValue."</td>";	
+	*/						
+							}
+							else {
+								echo "<td class='column'>".$cellValue."</td>";
+							}							
+					}	
+					
+				}
+				//echo '</tr><tr class="row">';
+				echo '</tr>';
+			  }
+			  //echo '</tr>';
+			  
+			  fclose($handle);
+			}
+		}
+	}
+	while (($iEndDateYear!=$iPrevYear) && ($iStartDateYear!=$iPrevYear));
+	
+	//echo $iWeekCount;
+	//$iWeekCount++;
+?>  
+	<tr>
+		<td><b>GRAND TOTAL</b></td>
+		<td></td>
+		<td></td>
+		<td id="summaryGrandTotalColumnId" class='columnTotal'>0.00</td>
+<!--		
+		<td id="summaryGrandTotalAvePerWeekColumnId" class='columnTotal'>0.00</td>
+-->
+		<td class='columnAmtPaid'>
+			<input type='text' id='summaryGrandTotalAvePerWeekColumnId' class='inputAnswerAmtPaid' value='0.00' min='' max='' oninput=''  readonly required>
+		</td>
+	</tr>
 
 	<input type="hidden" id="weekCountMaxId" value="<?php echo $iWeekCount;?>">
 
