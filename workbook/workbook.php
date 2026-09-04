@@ -7,7 +7,7 @@
   @company: USBONG
   @author: SYSON, MICHAEL B.
   @date created: 20200522
-  @date updated: 20260902; from 20260901
+  @date updated: 20260904; from 20260902
   
   Input:
   1) Expenses Template (.csv file)
@@ -42,10 +42,10 @@
 	/**/
 	                    body
                         {
+							
 							font-family: Arial;
 							font-size: 12pt;
-
-
+							
 							width: 860px;
 /*							
 							transform: scale(0.80);
@@ -114,16 +114,18 @@
 
 						td.columnDate
 						{
-							width: fit-content;
+							width: 100px; /*fit-content;*/
 							height: 100%;
 							
 							margin: 0;
 							padding: 1.5px;
-							
-							font-family: Arial;
-							font-size: 1rem;
 
-							text-align: right;
+/*							
+							font-family: monospace;
+							font-size: 11pt;
+*/
+
+							text-align: center;
 							
 							border-bottom: 1.5px solid #444444;
 							border-right: 1.5px solid #444444;
@@ -133,6 +135,7 @@
 							border: 1px solid #000000;		
 
 							background-color: #EDE6E6;
+
 						}
 
 						td.columnCount
@@ -180,8 +183,8 @@
 						
 						td.columnAmtPaid
 						{						
-							width: 40px;
-							height: 100%;
+							width: 6em;
+							height: auto;
 							
 							padding: 0;
 							margin: 0;
@@ -276,19 +279,21 @@
 
 						input.inputAnswerAmtPaid
 						{							
-							width: 75px;
-							height: 100%;
+							width: 95%;
+							height: auto;
 							
 /*							
 							margin-top: 2px;
 							margin-bottom: 4px;
 */						
 							margin: 0;
-							padding: 1.5px;
+							padding: 0;
+
 
 							font-family: Arial;
 							font-size: 1rem;
-
+							
+							border: 0px;		
 							border-radius: 0px;
 							text-align: right;
 
@@ -397,7 +402,7 @@
 							border: 1px solid #ab9c7d;	
 							border-radius: 2px;
 							color: #000000;
-						}
+						}						
     /**/
     </style>
     <title>
@@ -428,6 +433,9 @@
 			var iWeekCountMax = document.getElementById("weekCountMaxId").value;				
 			
 			//alert(iWeekCountMax);
+			
+			//added by Mike, 20260904
+			processWorkbook();
 			
 			for (iWeekCount=1; iWeekCount<iWeekCountMax; iWeekCount++) {
 				for (iRowCount=1; iRowCount<ROW_COUNT_MAX; iRowCount++) {
@@ -655,7 +663,7 @@
 */
 
 			if (Number.isNaN(Number(feeCell.value))) {
-				feeCell.value="0";
+				feeCell.value="0.00";
 			}
 			
 			if (Number.isNaN(Number(qtyCell.value))) {
@@ -664,7 +672,10 @@
 			
 			fOutput = (Number(feeCell.value)*Number(qtyCell.value));//.toFixed(2);
 			
-			amtPaidCell.value=fOutput;
+			amtPaidCell.value=fOutput.toFixed(2);
+
+			//removed by Mike, 20260904
+			//feeCell.value=Number(feeCell.value).toFixed(2);
 
 /*			
 			alert("fOutput: "+fOutput);
@@ -676,14 +687,14 @@
 			//TOTAL PART
 			//-----------------------------
 			//added by Mike, 20260825
-			iAmtPaidTotal=0;
+			fAmtPaidTotal=0;
 			for (iRowCount=1; iRowCount<ROW_COUNT_MAX; iRowCount++) {
-				iAmtPaidTotal += Number(document.getElementById("cellInputId"+iWeekCount+"-"+iRowCount+"-"+AMT_PAID_COLUMN).value);
+				fAmtPaidTotal += Number(document.getElementById("cellInputId"+iWeekCount+"-"+iRowCount+"-"+AMT_PAID_COLUMN).value);
 			}
 			
 			//alert(iAmtPaidTotal);
 			
-			grandTotal.innerHTML=(iAmtPaidTotal);//.toFixed(2);
+			grandTotal.innerHTML=(fAmtPaidTotal).toFixed(2);
 			
 			//return;
 		}		
@@ -692,8 +703,8 @@
 			var tableSummaryReport = document.getElementById("tableSummaryReportId");
 			var iWeekCountMax = document.getElementById("weekCountMaxId").value;	
 			
-			var iGrandTotal=0;
-			var iGrandTotalAvePerWeek=0;
+			var fGrandTotal=0;
+			var fGrandTotalAvePerWeek=0;
 			
 			iCurrTab=SUMMARY_TAB;
 
@@ -709,18 +720,18 @@
 
 				summaryTotalColumn.value=grandTotal.innerHTML;
 				
-				iGrandTotal+=Number(grandTotal.innerHTML);
+				fGrandTotal+=Number(grandTotal.innerHTML);
 				
 				//tableWeeklyExpensesReport.style.visibility="hidden";
 				tableWeeklyExpensesReport.style.display="none";
 			}
 			
-			iGrandTotalAvePerWeek=iGrandTotal/(iWeekCountMax-1);
+			fGrandTotalAvePerWeek=fGrandTotal/(iWeekCountMax-1);
 			
-			//alert(iGrandTotal.toFixed(2));
-			summaryGrandTotalColumn.innerHTML=iGrandTotal.toFixed(2);
-			//summaryGrandTotalAvePerWeekColumn.innerHTML=iGrandTotalAvePerWeek.toFixed(2);
-			summaryGrandTotalAvePerWeekColumn.value=iGrandTotalAvePerWeek.toFixed(2);
+			//alert(fGrandTotal.toFixed(2));
+			summaryGrandTotalColumn.innerHTML=fGrandTotal.toFixed(2);
+			//summaryGrandTotalAvePerWeekColumn.innerHTML=fGrandTotalAvePerWeek.toFixed(2);
+			summaryGrandTotalAvePerWeekColumn.value=fGrandTotalAvePerWeek.toFixed(2);
 
 			//tableSummaryReport.style.visibility="visible";
 			tableSummaryReport.style.display="inline-block";
@@ -729,17 +740,62 @@
 		function processWorkbook() {
 			var tableSummaryReport = document.getElementById("tableSummaryReportId");
 			var iWeekCountMax = document.getElementById("weekCountMaxId").value;	
+
+			var fColumnDateWidthMax=0;
 			
 			iCurrTab=WORKBOOK_TAB;
 
 			for (iWeekCount=1; iWeekCount<iWeekCountMax; iWeekCount++) {
 				var tableWeeklyExpensesReport = document.getElementById("tableWeeklyExpensesReportId"+iWeekCount);
+
+				var columnStartDate = document.getElementById("columnStartDateId"+iWeekCount);
+				var columnEndDate = document.getElementById("columnEndDateId"+iWeekCount);
+				
+				//alert(fColumnStartDate);
+				//alert(document.getElementById("columnStartDateId"+iWeekCount));
+				
 				//tableWeeklyExpensesReport.style.visibility="visible";
 				tableWeeklyExpensesReport.style.display="inline-block";
+				
+				//tableSummaryReport.style.visibility="hidden";
+				tableSummaryReport.style.display="none";
+
+				//-----------------
+				// auto-set column width; for date column; part 1
+				//-----------------
+
+				//do this after setting tableWeeklyExpensesReport's display to inline-block
+				//alert(columnStartDate.offsetWidth);
+				
+				var fColumnDateWidthMaxTemp=parseFloat(columnStartDate.offsetWidth);
+
+				//alert(fColumnDateWidthMaxTemp);
+				//alert(parseFloat(columnEndDate.offsetWidth));
+
+				if (fColumnDateWidthMaxTemp<parseFloat(columnEndDate.offsetWidth)) {
+					fColumnDateWidthMaxTemp=parseFloat(columnEndDate.offsetWidth);
+				}
+
+				//alert("fColumnDateWidthMaxTemp: "+fColumnDateWidthMaxTemp);
+
+				if (fColumnDateWidthMax<fColumnDateWidthMaxTemp) {
+					fColumnDateWidthMax=fColumnDateWidthMaxTemp;
+				}
 			}
 
-			//tableSummaryReport.style.visibility="hidden";
-			tableSummaryReport.style.display="none";
+			//-----------------
+			// auto-set column width; for date column; part 2
+			//-----------------
+
+			//alert(fColumnDateWidthMax);
+
+			for (iWeekCount=1; iWeekCount<iWeekCountMax; iWeekCount++) {
+				var columnStartDate = document.getElementById("columnStartDateId"+iWeekCount);
+				var columnEndDate = document.getElementById("columnEndDateId"+iWeekCount);
+				
+				columnStartDate.style.width=fColumnDateWidthMax+"px"; //100+"px";
+				columnEndDate.style.width=fColumnDateWidthMax+"px"; //100+"px";
+			}
 		}
 	  </script>
   <body onload="onLoad();">
@@ -856,6 +912,7 @@
 						}
 					}
 					else if (($iRowCount>=1) && ($iRowCount<$ROW_COUNT_MAX)) {
+						
 	/*					
 							$iCurrDayOfTheWeek=date("N"); //day of the week; 7 is Sunday;
 
@@ -873,7 +930,7 @@
 							//echo "START: ".$sStartDate."<br/>";
 
 							if (($iColumnCount>=0) and ($iColumnCount<=0)) {
-								echo "<td class='columnDate'>".$sStartDate."</td>";
+								echo "<td id='columnStartDateId".$iWeekCount."' class='columnDate'>".$sStartDate."</td>";
 	/*							
 								echo "<td class='column'>";
 									echo "<input type='text' id='cellInputId".$iWeekCount."-".$iRowCount."-".$iColumnCount."' class='inputDate' value='".$sStartDate."' min='' max=''  readonly required>";
@@ -881,7 +938,7 @@
 	*/							
 							}
 							else if (($iColumnCount>=1) and ($iColumnCount<=1)) {
-								echo "<td class='columnDate'>".$sEndDate."</td>";
+								echo "<td id='columnEndDateId".$iWeekCount."' class='columnDate'>".$sEndDate."</td>";
 	/*														
 								echo "<td class='column'>";
 									echo "<input type='text' id='cellInputId".$iWeekCount."-".$iRowCount."-".$iColumnCount."' class='inputDate' value='".$sEndDate."' min='' max=''  readonly required>";
