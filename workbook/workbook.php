@@ -7,7 +7,7 @@
   @company: USBONG
   @author: SYSON, MICHAEL B.
   @date created: 20200522
-  @date updated: 20260904; from 20260902
+  @date updated: 20260905; from 20260904
   
   Input:
   1) Expenses Template (.csv file)
@@ -185,8 +185,9 @@
 						{						
 							width: 6em;
 							height: auto;
-							
-							padding: 0;
+
+							padding: 0;				
+							padding-right: 0.125em;
 							margin: 0;
 							
 							font-family: Arial;
@@ -196,7 +197,7 @@
 
 							border: 1px solid #000000;		
 						}
-
+						
 						td.columnTotal
 						{
 							border: 1px dotted #ab9c7d;	
@@ -250,7 +251,7 @@
 */						
 							margin: 0;
 							padding: 0;
-							
+														
 							font-family: Arial;
 							font-size: 1rem;
 
@@ -279,32 +280,24 @@
 
 						input.inputAnswerAmtPaid
 						{							
-							width: 95%;
+							width: 100%;
 							height: auto;
-							
-/*							
-							margin-top: 2px;
-							margin-bottom: 4px;
-*/						
+
 							margin: 0;
 							padding: 0;
-
-
+							padding-right: 0.125em;
+							
+							padding-top: 0.125em;
+							padding-bottom: 0.125em;
+							
 							font-family: Arial;
 							font-size: 1rem;
 							
-							border: 0px;		
-							border-radius: 0px;
+							border: 1px solid #888888;
+							border-radius: 0;
 							text-align: right;
-
-/*														
-							border-bottom: 1.5px solid #444444;
-							border-right: 1.5px solid #444444;
-							
-							background-color: #EDE6E6;
-*/							
 						}
-
+						
 						input.inputCount
 						{
 							width: 20px;
