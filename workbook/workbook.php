@@ -7,10 +7,11 @@
   @company: USBONG
   @author: SYSON, MICHAEL B.
   @date created: 20200522
-  @date updated: 20260905; from 20260904
+  @date updated: 20260907; from 20260905
   
   Input:
   1) Expenses Template (.csv file)
+  2) Expesnes Template Total (.csv file)
 
   Output:
   1) Summary Worksheet (Weekly Expenses Report) that is viewable on a Computer Web Browser  
@@ -111,6 +112,14 @@
 							border: 1px dotted #ab9c7d;		
 							border-radius: 0px;
 						}	
+						
+						td.columnExtra {
+							font-weight: bold;
+							padding-right: 0.125em;
+							
+							background-color: #00A2E8;
+							text-align: center;
+						}
 
 						td.columnDate
 						{
@@ -188,7 +197,6 @@
 
 							padding: 0;				
 							padding-right: 0.125em;
-							margin: 0;
 							
 							font-family: Arial;
 							font-size: 1rem;
@@ -293,7 +301,47 @@
 							font-family: Arial;
 							font-size: 1rem;
 							
-							border: 1px solid #888888;
+							border: 0px solid #888888;
+							border-radius: 0;
+							text-align: right;
+						}
+						
+						input.inputSummaryGrandTotalAvePerWeek, .inputSummaryGrandTotalApproxPerMonth
+						{							
+							width: 100%;
+							height: auto;
+
+							margin: 0;
+							padding: 0;
+							padding-right: 0.125em;
+							
+							padding-top: 0.125em;
+							padding-bottom: 0.125em;
+							
+							font-family: Arial;
+							font-size: 1rem;
+							
+							border: 0px solid #888888;
+							border-radius: 0;
+							text-align: right;
+						}
+						
+						input.inputSummaryGrandTotalAvePerWeek, .inputSummaryGrandTotalApproxPerMonth: focus
+						{							
+							width: 100%;
+							height: auto;
+
+							margin: 0;
+							padding: 0;
+							padding-right: 0.125em;
+							
+							padding-top: 0.125em;
+							padding-bottom: 0.125em;
+							
+							font-family: Arial;
+							font-size: 1rem;
+							
+							border: 1px solid #FF0000;
 							border-radius: 0;
 							text-align: right;
 						}
@@ -570,8 +618,19 @@
 						//if active element is INPUT;
 						if (focusedElement && focusedElement.tagName === "INPUT") {
 							if (focusedElement.id=="summaryGrandTotalAvePerWeekColumnId") {
+																
+								iSummaryWeekCount=iWeekCountMax-1;
+							
+								var cellInput = document.getElementById("summaryTotalColumnId"+iSummaryWeekCount);
+
+								cellInput.focus();
+														
 								return;
-							}
+							}		
+
+							if (focusedElement.id=="summaryGrandTotalApproxPerMonthColumnId") {
+								return;
+							}	
 							
 	/*
 							alert("iWeekCount: "+iWeekCount);
@@ -600,19 +659,62 @@
 						if (focusedElement && focusedElement.tagName === "INPUT") {
 							if (focusedElement.id=="summaryGrandTotalAvePerWeekColumnId") {
 								return;
-							}
+							}	
 							
-							var cellInput = document.getElementById("cellInputId"+iWeekCount+"-"+iCurrRowIndex+"-"+iCurrColumnIndex);
-							
+							if (focusedElement.id=="summaryGrandTotalApproxPerMonthColumnId") {
+								return;
+							}								
+														
 							iSummaryWeekCount+=1;
 
-							if (iSummaryWeekCount>iWeekCountMax) {
-								iSummaryWeekCount=iWeekCountMax;
+							if (iSummaryWeekCount>=iWeekCountMax) {
+								//iSummaryWeekCount=iWeekCountMax;
+								
+								var cellInput = document.getElementById("summaryGrandTotalAvePerWeekColumnId");
+				
+								cellInput.focus();
+														
+								return;
 							}
 							
 							var cellInput = document.getElementById("summaryTotalColumnId"+iSummaryWeekCount);							
 							cellInput.focus();
 						}
+					}
+					else if (e.keyCode==37) { //key left
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+							
+							if (focusedElement.id=="summaryGrandTotalApproxPerMonthColumnId") {
+								//CURR POSITION
+								var currCellInput = document.getElementById("summaryGrandTotalApproxPerMonthColumnId");
+								
+								var cellInput = document.getElementById("summaryGrandTotalAvePerWeekColumnId");							
+								cellInput.focus();
+							}
+						}
+					}
+					else if (e.keyCode==39) { //key right
+						//reference; Google AI Overview; stackoverflow
+						//if active element is INPUT;
+						if (focusedElement && focusedElement.tagName === "INPUT") {
+							
+							if (focusedElement.id=="summaryGrandTotalAvePerWeekColumnId") {
+								//CURR POSITION
+								var currCellInput = document.getElementById("summaryGrandTotalAvePerWeekColumnId");
+								
+								var cellInput = document.getElementById("summaryGrandTotalApproxPerMonthColumnId");							
+								cellInput.focus();
+							}
+						}
+					}
+					else if ((e.keyCode==40) || (e.keyCode==13)) { //key down OR ENTER					
+						iSummaryWeekCount=1;
+							
+						var cellInput = document.getElementById("summaryTotalColumnId"+iSummaryWeekCount);
+
+						cellInput.focus();
 					}
 				}
 			}
@@ -698,15 +800,18 @@
 			
 			var fGrandTotal=0;
 			var fGrandTotalAvePerWeek=0;
+			var fGrandTotalApproxPerMonth=0;
 			
 			iCurrTab=SUMMARY_TAB;
+
+			var summaryGrandTotalColumn = document.getElementById("summaryGrandTotalColumnId");
+			var summaryGrandTotalAvePerWeekColumn = document.getElementById("summaryGrandTotalAvePerWeekColumnId");
+			var summaryGrandTotalApproxPerMonthColumn = document.getElementById("summaryGrandTotalApproxPerMonthColumnId");
 
 			for (iWeekCount=1; iWeekCount<iWeekCountMax; iWeekCount++) {
 				var tableWeeklyExpensesReport = document.getElementById("tableWeeklyExpensesReportId"+iWeekCount);
 				var grandTotal = document.getElementById("grandTotalId"+iWeekCount);
 				var summaryTotalColumn = document.getElementById("summaryTotalColumnId"+iWeekCount);
-				var summaryGrandTotalColumn = document.getElementById("summaryGrandTotalColumnId");
-				var summaryGrandTotalAvePerWeekColumn = document.getElementById("summaryGrandTotalAvePerWeekColumnId");
 				
 				//alert(grandTotal.innerHTML);
 				//alert(summaryTotalColumn.value);
@@ -720,11 +825,14 @@
 			}
 			
 			fGrandTotalAvePerWeek=fGrandTotal/(iWeekCountMax-1);
+			fGrandTotalApproxPerMonth=fGrandTotalAvePerWeek*4;
 			
 			//alert(fGrandTotal.toFixed(2));
 			summaryGrandTotalColumn.innerHTML=fGrandTotal.toFixed(2);
 			//summaryGrandTotalAvePerWeekColumn.innerHTML=fGrandTotalAvePerWeek.toFixed(2);
 			summaryGrandTotalAvePerWeekColumn.value=fGrandTotalAvePerWeek.toFixed(2);
+
+			summaryGrandTotalApproxPerMonthColumn.value=fGrandTotalApproxPerMonth.toFixed(2);
 
 			//tableSummaryReport.style.visibility="visible";
 			tableSummaryReport.style.display="inline-block";
@@ -1025,8 +1133,13 @@
 	$SUMMARY_START_DATE_COLUMN=1;
 	$SUMMARY_END_DATE_COLUMN=2;
 	$SUMMARY_TOTAL_COLUMN=3;
+	$SUMMARY_COLUMN_COUNT_MAX=$SUMMARY_TOTAL_COLUMN+1;
 	
-	$SUMMARY_COLUMN_COUNT_MAX=4;
+	//added by Mike, 20260907
+	//extra
+	$SUMMARY_MEAN_COLUMN=4;
+	$SUMMARY_APPROX_PER_MONTH_COLUMN=5;
+
 	$SUMMARY_ROW_COUNT_MAX=2;//$iWeekCount;
 	
 	//WINDOWS machine
@@ -1157,8 +1270,20 @@
 	*/						
 							}
 							else {
-								echo "<td class='column'>".$cellValue."</td>";
-							}							
+								//echo $iSummaryWeekCount."<br/>";
+								
+								if ($iSummaryWeekCount==($iWeekCount-1)) {
+									if ($iColumnCount==$SUMMARY_MEAN_COLUMN) {
+										echo "<td class='columnExtra'>MEAN</td>";
+									}
+									else if ($iColumnCount==$SUMMARY_APPROX_PER_MONTH_COLUMN) {
+										echo "<td class='columnExtra'>MONTHLY ≈</td>";
+									}
+								}
+								else {
+									echo "<td class='column'>".$cellValue."</td>";
+								}
+							}				
 					}	
 					
 				}
@@ -1185,8 +1310,12 @@
 		<td id="summaryGrandTotalAvePerWeekColumnId" class='columnTotal'>0.00</td>
 -->
 		<td class='columnAmtPaid'>
-			<input type='text' id='summaryGrandTotalAvePerWeekColumnId' class='inputAnswerAmtPaid' value='0.00' min='' max='' oninput=''  readonly required>
+			<input type='text' id='summaryGrandTotalAvePerWeekColumnId' class='inputSummaryGrandTotalAvePerWeek' value='0.00' min='' max='' oninput=''  readonly required>
 		</td>
+		<td class='columnAmtPaid'>
+			<input type='text' id='summaryGrandTotalApproxPerMonthColumnId' class='inputSummaryGrandTotalApproxPerMonth' value='0.00' min='' max='' oninput=''  readonly required>
+		</td>
+
 	</tr>
 
 	<input type="hidden" id="weekCountMaxId" value="<?php echo $iWeekCount;?>">
